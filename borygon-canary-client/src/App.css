@@ -1,0 +1,25 @@
+.App {
+  text-align: center;
+}
+
+.borygon {
+  height: 168px;
+  height: 168px;
+  image-rendering: pixelated;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .borygon {
+    animation: borygon-spin infinite 20s linear;
+  }
+}
+
+@keyframes borygon-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
