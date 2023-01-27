@@ -65,10 +65,11 @@ export const getRooms = async (): Promise<string[]> => {
 
 export const getUnhandledLogs = async (from?: number): Promise<Paginated<UnhandledMessage>> => {
   try {
-    const { data } = await Axios.get('/api/logs', {
+    const { data } = await Axios.get<Paginated<UnhandledMessage>>('/api/logs', {
       responseType: 'json',
       params: { type: 'unhandled', from },
     });
+    data.data.sort((a, b) => b.timestamp - a.timestamp);
     return data;
   } catch (error) {
     return {
@@ -80,10 +81,11 @@ export const getUnhandledLogs = async (from?: number): Promise<Paginated<Unhandl
 
 export const getUndeserializableLogs = async (from?: number): Promise<Paginated<UndeserializableMessage>> => {
   try {
-    const { data } = await Axios.get('/api/logs', {
+    const { data } = await Axios.get<Paginated<UndeserializableMessage>>('/api/logs', {
       responseType: 'json',
       params: { type: 'undeserializable', from },
     });
+    data.data.sort((a, b) => b.timestamp - a.timestamp);
     return data;
   } catch (error) {
     return {
@@ -95,10 +97,11 @@ export const getUndeserializableLogs = async (from?: number): Promise<Paginated<
 
 export const getUnserializableLogs = async (from?: number): Promise<Paginated<UnserializableMessage>> => {
   try {
-    const { data } = await Axios.get('/api/logs', {
+    const { data } = await Axios.get<Paginated<UnserializableMessage>>('/api/logs', {
       responseType: 'json',
       params: { type: 'unserializable', from },
     });
+    data.data.sort((a, b) => b.timestamp - a.timestamp);
     return data;
   } catch (error) {
     return {
@@ -110,10 +113,11 @@ export const getUnserializableLogs = async (from?: number): Promise<Paginated<Un
 
 export const getInequalLogs = async (from?: number): Promise<Paginated<NotEqualMessage>> => {
   try {
-    const { data } = await Axios.get('/api/logs', {
+    const { data } = await Axios.get<Paginated<NotEqualMessage>>('/api/logs', {
       responseType: 'json',
       params: { type: 'inequal', from },
     });
+    data.data.sort((a, b) => b.timestamp - a.timestamp);
     return data;
   } catch (error) {
     return {

@@ -58,7 +58,7 @@ const Uptime = ({ startTime }: { startTime: number}) => {
   });
 
   const duration = moment.duration(time - startTime, 'milliseconds');
-  const uptimeDuration = duration.format('h:mm:ss');
+  const uptimeDuration = duration.format('HH:mm:ss', { trim: false });
 
   return <>{uptimeDuration}</>
 };
@@ -260,7 +260,7 @@ const App = () => {
   useEffect(() => {
     if (!autoRefresh) return;
     update();
-    const interval = setInterval(update, 5 * 1000);
+    const interval = setInterval(update, 60 * 1000);
     return () => clearInterval(interval);
   }, [autoRefresh]);
 

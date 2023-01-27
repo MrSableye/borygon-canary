@@ -50,9 +50,9 @@ export const initialize = (database: Low<MessageDatabase>, username: string, pas
         };
         database.data.unhandledMessages.push(unhandledMessage);
       } else {
-        const serializedMessage = serializeMessage(message.rawMessageName as any, message.message[0], message.message[1]);
+        const serializedMessage = serializeMessage(message.rawMessageName, message.value.message, message.value.keywordArguments);
         if ('value' in serializedMessage) {
-          const serialized = message.rawMessageName === undefined ? `${serializedMessage.value.join('|')}` : `|${serializedMessage.value.join('|')}`;
+          const serialized = serializedMessage.value.join('|');
           const [rawWithoutKw, rawKw] = extractKeywordArguments(message.rawMessage);
           const [serialWithoutKw, serialKw] = extractKeywordArguments(serialized);
           const equal = (rawWithoutKw === serialWithoutKw) && (Object.keys(rawKw).length === Object.keys(serialKw).length) && (Object.keys(rawKw).every((rawKey) => rawKw[rawKey] === serialKw[rawKey]));
@@ -61,7 +61,7 @@ export const initialize = (database: Low<MessageDatabase>, username: string, pas
               timestamp: now,
               room: message.room,
               rawMessage: message.rawMessage,
-              deserializedMessage: message.message,
+              deserializedMessage: [message.value.message, message.value.keywordArguments],
               serializedMessage: serialized,
             };
             database.data.notEqualMessages.push(notEqualMessage);
@@ -71,15 +71,16 @@ export const initialize = (database: Low<MessageDatabase>, username: string, pas
             timestamp: now,
             room: message.room,
             rawMessage: message.rawMessage,
-            deserializedMessage: message.message,
+            deserializedMessage: [message.value.message, message.value.keywordArguments],
             errors: serializedMessage.errors,
           };
           database.data.unserializableMessages.push(unserializableMessage);
         }
       }
     }),
-    showdownClient.errors.on('messageError', (messageError) => {
+    showdownClient.messageErrors.onAny((_, messageError) => {
       if (!database.data) return;
+      if (!messageError) return;
       database.data.totalMessages++;
       const now = Date.now();
       const undeserializableMessage: UndeserializableMessage = {
@@ -91,7 +92,7 @@ export const initialize = (database: Low<MessageDatabase>, username: string, pas
       database.data.undeserializableMessages.push(undeserializableMessage);
     }),
     showdownClient.messages.on('queryResponse', async (queryResponseMessage) => {
-      const { response } = queryResponseMessage.message[0];
+      const { response } = queryResponseMessage.value.message;
 
       if (!seenChat && ('chat' in (response as any))) {
         seenChat = true;
